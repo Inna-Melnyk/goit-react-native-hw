@@ -5,7 +5,7 @@ import {
 } from "react-native";
 
 export const ScreenBackground = ({children}) => {
-  const image = require("../../images/background.jpg");
+  const image = require("../../assets/images/background.jpg");
 
   return (
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>

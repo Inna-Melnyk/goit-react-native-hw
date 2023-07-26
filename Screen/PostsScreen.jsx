@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { LogOutImage } from "./components/svg/LogOutImageSvg";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import Img from "../images/user-photo.jpg";
+import Img from "../assets/images/user-photo.jpg";
 import { MenuSvg } from "./components/svg/MenuSvg";
 import { UserSvg } from "./components/svg/User";
 import { PlusSvg } from "./components/svg/PlusSvg";
