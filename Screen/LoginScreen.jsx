@@ -17,34 +17,49 @@ import { Input } from "./components/Input";
 
 export const LoginScreen = () => {
   return (
-    <ScreenBackground>
-      <View style={styles.background}>
-        <Text style={styles.text}>Увійти</Text>
-        <Input
-          placeholder={"Адреса електронної пошти"}
-          placeholderTextColor={"#BDBDBD"}
-          inputMode={"email"}
-        />
-        <Input placeholder={"Пароль"} placeholderTextColor={"#BDBDBD"} />
-        <TouchableOpacity style={styles.button} title="Зареєстуватися">
-          <Text style={styles.buttonText}>Увійти</Text>
-        </TouchableOpacity>
-        <Text style={styles.info}>
-          Немає акаунту? <Text style={styles.underline}>Зареєструватися</Text>
-        </Text>
-      </View>
-    </ScreenBackground>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.inner}>
+          <ScreenBackground>
+            <View style={styles.background}>
+              <Text style={styles.text}>Увійти</Text>
+              <Input
+                placeholder={"Адреса електронної пошти"}
+                placeholderTextColor={"#BDBDBD"}
+                inputMode={"email"}
+              />
+              <Input placeholder={"Пароль"} placeholderTextColor={"#BDBDBD"} />
+              <TouchableOpacity style={styles.button} title="Зареєстуватися">
+                <Text style={styles.buttonText}>Увійти</Text>
+              </TouchableOpacity>
+              <Text style={styles.info}>
+                Немає акаунту?
+                <Text style={styles.underline}>Зареєструватися</Text>
+              </Text>
+            </View>
+          </ScreenBackground>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
-  background: {
-    position: "relative",
+inner: {
+    flex: 1,
     justifyContent: "space-around",
+  },
+   background: {
+    position: "relative",
     backgroundColor: "#ffffff",
     marginTop: "auto",
     paddingTop: 30,

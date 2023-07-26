@@ -17,43 +17,55 @@ import { Input } from "./components/Input";
 
 export const RegistrationScreen = () => {
   return (
-    <ScreenBackground>
-      <View style={styles.background}>
-        <View style={styles.imageContainer}>
-          <AddImage style={styles.svg} />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.inner}>
+          <ScreenBackground>
+            <View style={styles.background}>
+              <View style={styles.imageContainer}>
+                <AddImage style={styles.svg} />
+              </View>
+
+              <Text style={styles.text}>Реєстрація</Text>
+              <Input
+                placeholder={"Логін"}
+                placeholderTextColor={"#BDBDBD"}
+                inputMode={"text"}
+              />
+              <Input
+                placeholder={"Адреса електронної пошти"}
+                placeholderTextColor={"#BDBDBD"}
+                inputMode={"email"}
+              />
+
+              <Input placeholder={"Пароль"} placeholderTextColor={"#BDBDBD"} />
+              <TouchableOpacity
+                style={styles.button}
+                title="Зареєстуватися"
+                onPress={() => null}>
+                <Text style={styles.buttonText}>Зареєстуватися</Text>
+              </TouchableOpacity>
+              <Text style={styles.info}>
+                Вже є акаунт?
+                <Text style={styles.underline}>Увійти</Text>
+              </Text>
+            </View>
+          </ScreenBackground>
         </View>
-
-        <Text style={styles.text}>Реєстрація</Text>
-        <Input
-          placeholder={"Логін"}
-          placeholderTextColor={"#BDBDBD"}
-          inputMode={"text"}
-        />
-        <Input
-          placeholder={"Адреса електронної пошти"}
-          placeholderTextColor={"#BDBDBD"}
-          inputMode={"email"}
-        />
-
-        <Input placeholder={"Пароль"} placeholderTextColor={"#BDBDBD"} />
-        <TouchableOpacity
-          style={styles.button}
-          title="Зареєстуватися"
-          onPress={() => null}>
-          <Text style={styles.buttonText}>Зареєстуватися</Text>
-        </TouchableOpacity>
-        <Text style={styles.info}>
-          Вже є акаунт?
-          <Text style={styles.underline}>Увійти</Text>
-        </Text>
-      </View>
-    </ScreenBackground>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  inner: {
+    flex: 1,
+    justifyContent: "space-around",
   },
 
   image: {
@@ -64,7 +76,6 @@ const styles = StyleSheet.create({
   },
   background: {
     position: "relative",
-    justifyContent: "space-around",
     backgroundColor: "#ffffff",
     marginTop: "auto",
     paddingTop: 83,
