@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
-export const Input = ({ placeholder, placeholderTextColor, inputMode='text' }) => {
+export const Input = ({
+  placeholder,
+  placeholderTextColor,
+  inputMode = "text",
+  onChange,
+  value,
+  secureTextEntry=false,
+}) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const getBorderColor = () => {
@@ -20,32 +27,22 @@ export const Input = ({ placeholder, placeholderTextColor, inputMode='text' }) =
     setIsFocused(false);
   };
   return (
-      <TextInput
-        style={[{ borderColor: getBorderColor() }, styles.input]}
-        // onChangeText={(text) => setEmail(text)}
-        // value={email}
-        placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor}
-        inputMode={inputMode}
-        onFocus={() => onImputFocus()}
-        onBlur={() => onImputBlur()}
-      />
-    //    <TextInput
-    //     style={styles.input}
-    //     // onChangeText={(text) => setPassword(text)}
-    //     // value={password}
-    //     placeholder="Пароль"
-    //     placeholderTextColor="#BDBDBD"
-    //     onFocus={() => onImputFocus()}
-    //     onBlur={() => onImputBlur()}
-    //   /> 
-
+    <TextInput
+      style={[{ borderColor: getBorderColor() }, styles.input]}
+      onChangeText={(e) => onChange(e)}
+      value={value}
+      placeholder={placeholder}
+      placeholderTextColor={placeholderTextColor}
+      inputMode={inputMode}
+      onFocus={() => onImputFocus()}
+      onBlur={() => onImputBlur()}
+      secureTextEntry = {secureTextEntry}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    // height: 42,
     borderWidth: 1,
     borderRadius: 4,
     paddingHorizontal: 5,

@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   Platform,
   Keyboard,
@@ -11,11 +10,25 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AddImage from "./components/svg/AddImageSvg";
-import { StatusBar } from "expo-status-bar";
 import { ScreenBackground } from "./components/ScreenBackground";
 import { Input } from "./components/Input";
 
 export const RegistrationScreen = () => {
+  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onRegister = () => {
+    console.log({ login: login, email: email, password: password });
+    reset();
+  };
+
+  const reset = () => {
+    setLogin("");
+    setEmail("");
+    setPassword("");
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -33,18 +46,28 @@ export const RegistrationScreen = () => {
                 placeholder={"Логін"}
                 placeholderTextColor={"#BDBDBD"}
                 inputMode={"text"}
+                onChange={setLogin}
+                value={login}
               />
               <Input
                 placeholder={"Адреса електронної пошти"}
                 placeholderTextColor={"#BDBDBD"}
                 inputMode={"email"}
+                onChange={setEmail}
+                value={email}
               />
 
-              <Input placeholder={"Пароль"} placeholderTextColor={"#BDBDBD"} />
+              <Input
+                placeholder={"Пароль"}
+                placeholderTextColor={"#BDBDBD"}
+                onChange={setPassword}
+                value={password}
+                secureTextEntry={true}
+              />
               <TouchableOpacity
                 style={styles.button}
                 title="Зареєстуватися"
-                onPress={() => null}>
+                onPress={onRegister}>
                 <Text style={styles.buttonText}>Зареєстуватися</Text>
               </TouchableOpacity>
               <Text style={styles.info}>
@@ -62,6 +85,7 @@ export const RegistrationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "flex-end",
   },
   inner: {
     flex: 1,
