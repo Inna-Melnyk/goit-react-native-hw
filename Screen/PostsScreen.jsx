@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+
 import {
   StyleSheet,
   Text,
@@ -19,16 +20,16 @@ import { MenuSvg } from "./components/svg/MenuSvg";
 import { UserSvg } from "./components/svg/User";
 import { PlusSvg } from "./components/svg/PlusSvg";
 
-export const PostsScreen = () => {
+export const PostsScreen = (props) => {
+  const { navigate } = props.navigation;
+
   return (
-    <SafeAreaView
-      style={styles.safe}
-      edges={["right", "left", "bottom", "top"]}>
+    
       <View style={styles.container}>
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <Text style={styles.text}>Публікації</Text>
           <LogOutImage style={styles.logout} />
-        </View>
+        </View> */}
         <ScrollView style={styles.scrollView}>
           <View style={styles.main}>
             <View style={styles.user}>
@@ -41,18 +42,16 @@ export const PostsScreen = () => {
           </View>
         </ScrollView>
 
-        <View style={styles.footer}>
+        {/* <View style={styles.footer}>
           <MenuSvg />
           <TouchableOpacity
             style={styles.button}
-            title="Add"
-            onPress={() => null}>
+            title="Add">
             <PlusSvg />
           </TouchableOpacity>
           <UserSvg />
-        </View>
+        </View> */}
       </View>
-    </SafeAreaView>
   );
 };
 
@@ -67,10 +66,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     // marginBottom: 80,
   },
-  header: {
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 0, 0, 0.3)",
-  },
+ 
 
   text: {
     position: "relative",

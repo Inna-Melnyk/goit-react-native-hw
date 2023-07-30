@@ -7,7 +7,8 @@ export const Input = ({
   inputMode = "text",
   onChange,
   value,
-  secureTextEntry=false,
+  secureTextEntry = false,
+  // isOpenKeyboard,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -20,10 +21,12 @@ export const Input = ({
   };
 
   const onImputFocus = () => {
+    // isOpenKeyboard(true);
     setIsFocused(true);
   };
 
   const onImputBlur = () => {
+    // isOpenKeyboard(false);
     setIsFocused(false);
   };
   return (
@@ -36,7 +39,7 @@ export const Input = ({
       inputMode={inputMode}
       onFocus={() => onImputFocus()}
       onBlur={() => onImputBlur()}
-      secureTextEntry = {secureTextEntry}
+      secureTextEntry={secureTextEntry}
     />
   );
 };

@@ -8,13 +8,14 @@ export const UserSvg = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}>
+    >
     <Path
       d="M20 21V19C20 16.7909 18.2091 15 16 15H8C5.79086 15 4 16.7909 4 19V21"
       stroke="#212121"
       stroke-opacity="0.8"
       stroke-linecap="round"
       stroke-linejoin="round"
+      {...props}
     />
     <Path
       fill-rule="evenodd"
@@ -24,6 +25,7 @@ export const UserSvg = (props) => (
       stroke-opacity="0.8"
       stroke-linecap="round"
       stroke-linejoin="round"
+      {...props}
     />
   </Svg>
 );

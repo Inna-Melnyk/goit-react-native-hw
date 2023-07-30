@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
   Text,
@@ -12,13 +13,18 @@ import {
 
 import { ScreenBackground } from "./components/ScreenBackground";
 import { Input } from "./components/Input";
+import { StatusBar } from "react-native";
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // const [isOpenKeyboard, setIsOpenKeyboard] = useState(false);
+
+  const navigation = useNavigation();
 
   const onLogin = () => {
     console.log({ email: email, password: password });
+    navigation.navigate("Home");
     reset();
   };
 
@@ -26,44 +32,122 @@ export const LoginScreen = () => {
     setEmail("");
     setPassword("");
   };
+
+  // const onKeyboard = (keyboardStatus) => {
+  //   return setIsOpenKeyboard(keyboardStatus);
+  // };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.inner}>
-          <ScreenBackground>
-            <View style={styles.background}>
-              <Text style={styles.text}>Увійти</Text>
-              <Input
-                placeholder={"Адреса електронної пошти"}
-                placeholderTextColor={"#BDBDBD"}
-                inputMode={"email"}
-                onChange={setEmail}
-                value={email}
-              />
-              <Input
-                placeholder={"Пароль"}
-                placeholderTextColor={"#BDBDBD"}
-                onChange={setPassword}
-                value={password}
-                secureTextEntry={true}
-              />
-              <TouchableOpacity
-                style={styles.button}
-                title="Зареєстуватися"
-                onPress={onLogin}>
-                <Text style={styles.buttonText}>Увійти</Text>
-              </TouchableOpacity>
-              <Text style={styles.info}>
-                Немає акаунту?
-                <Text style={styles.underline}>Зареєструватися</Text>
-              </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ScreenBackground>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}>
+            <View style={styles.inner}>
+              <View
+                style={{
+                  ...styles.background,
+                  // paddingBottom: isOpenKeyboard ? 78 : 20,
+                }}>
+                <Text style={styles.text}>Увійти</Text>
+                <Input
+                  placeholder={"Адреса електронної пошти"}
+                  placeholderTextColor={"#BDBDBD"}
+                  inputMode={"email"}
+                  onChange={setEmail}
+                  value={email}
+                  // isOpenKeyboard={onKeyboard}
+                />
+                <Input
+                  placeholder={"Пароль"}
+                  placeholderTextColor={"#BDBDBD"}
+                  onChange={setPassword}
+                  value={password}
+                  secureTextEntry={true}
+                  // isOpenKeyboard={onKeyboard}
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  title="Зареєстуватися"
+                  onPress={onLogin}>
+                  <Text style={styles.buttonText}>Увійти</Text>
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 2,
+                  }}>
+                  <Text style={styles.info}>Вже є акаунт? </Text>
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Registration")}>
+                    <Text style={[styles.info, styles.underline]}>
+                      Зареєструватися
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </ScreenBackground>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </ScreenBackground>
+        <StatusBar style="auto" />
+      </View>
+    </TouchableWithoutFeedback>
+
+    // <KeyboardAvoidingView
+    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
+    //   style={styles.container}>
+    //   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    //     <View style={styles.inner}>
+    //       <ScreenBackground>
+    //         <View style={styles.background}>
+    //           <Text style={styles.text}>Увійти</Text>
+    //           <Input
+    //             placeholder={"Адреса електронної пошти"}
+    //             placeholderTextColor={"#BDBDBD"}
+    //             inputMode={"email"}
+    //             onChange={setEmail}
+    //             value={email}
+    //             isOpenKeyboard={onKeyboard}
+    //           />
+    //           <Input
+    //             placeholder={"Пароль"}
+    //             placeholderTextColor={"#BDBDBD"}
+    //             onChange={setPassword}
+    //             value={password}
+    //             secureTextEntry={true}
+    //             isOpenKeyboard={onKeyboard}
+    //           />
+    //           <TouchableOpacity
+    //             style={styles.button}
+    //             title="Зареєстуватися"
+    //             onPress={onLogin}>
+    //             <Text style={styles.buttonText}>Увійти</Text>
+    //           </TouchableOpacity>
+
+    //           <View
+    //             style={{
+    //               flexDirection: "row",
+    //               justifyContent: "center",
+    //               gap: 2,
+    //             }}>
+    //             <Text style={styles.info}>Вже є акаунт? </Text>
+
+    //             <TouchableOpacity
+    //               onPress={() => navigation.navigate("Registration")}>
+    //               <Text style={[styles.info, styles.underline]}>
+    //                 Зареєструватися
+    //               </Text>
+    //             </TouchableOpacity>
+    //           </View>
+    //         </View>
+    //       </ScreenBackground>
+    //     </View>
+    //   </TouchableWithoutFeedback>
+    // </KeyboardAvoidingView>
   );
 };
 
