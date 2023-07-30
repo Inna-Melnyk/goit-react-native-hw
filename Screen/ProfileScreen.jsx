@@ -1,117 +1,64 @@
-
-// import { Text } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { StyleSheet, View} from "react-native";
-
-
-// export const ProfileScreen = (navigator) => {
-//   return (
-//     <SafeAreaView
-//       style={styles.safe}
-//       edges={["right", "left", "bottom", "top"]}>
-//       <View style={{flex:1, backgroundColor: 'white'}}>
-
-//         <Text>PROFILE SCREEN</Text>
-//       </View>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   safe: { width: "100%", flex: 1 },
- 
-// });
-
-import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React  from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Button,
+   TouchableOpacity,
+  Image,
+  ScrollView,
 } from "react-native";
-import AddImage from "./components/svg/AddImageSvg";
 import { LogOutImage } from "./components/svg/LogOutImageSvg";
 import { ScreenBackground } from "./components/ScreenBackground";
-import { Input } from "./components/Input";
 
-import { StatusBar } from "react-native";
-
-export const ProfileScreen = ({navigation} ) => {
-  console.log(navigation);
+import { ProfilePost } from "./components/ProfilePost";
+import { CloseSvg } from "./components/svg/CloseSvg";
 
 
+export const ProfileScreen = ({ navigation }) => {
 
-    return (
-      
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <ScreenBackground>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1 }}>
-              <View style={styles.inner}>
-                <View
-                  style={{
-                    ...styles.background,
-                    // paddingBottom: isOpenKeyboard ? 78 : 20,
-                  }}>
-                  <TouchableOpacity
-                    style={{ marginLeft: "auto", marginBottom: 46 }}
-                    onPress={() => navigation.navigate("Registration")}>
-                    <LogOutImage />
-                  </TouchableOpacity>
-
-                  <View style={styles.imageContainer}>
-                    <AddImage style={styles.svg} />
-                  </View>
-
-                  <Text style={styles.text}>Natali Romanova</Text>
-                </View>
-              </View>
-            </KeyboardAvoidingView>
-          </ScreenBackground>
-          <StatusBar style="auto" />
+  return (
+       <ScreenBackground>
+      <View style={styles.wrapper}>
+        <TouchableOpacity style={{ position: "absolute", right: 16, top: 22 }}>
+          <LogOutImage onPress={() => navigation.navigate("Registration")}/>
+        </TouchableOpacity>
+        <View style={styles.photoWrapper}>
+          <Image source={require("../assets/images/user120x120.png")}/>
+          <TouchableOpacity style={styles.deletePhotoButton}>
+            <CloseSvg />
+          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
-            
-    
-    );
+        <Text style={styles.text}>Natali Romanova</Text>
+        <ScrollView>
+          <ProfilePost
+            way={require("../assets/images/forest.jpg")}
+            name={"Ліс"}
+            commentsNumber={8}
+            country={"Ukraine"}
+            likes={153}
+          />
+          <ProfilePost
+            way={require("../assets/images/sunset.jpg")}
+            name={"Захід на Чорному морі"}
+            commentsNumber={2}
+            country={"Ukraine"}
+            likes={200}
+          />
+          <ProfilePost
+            way={require("../assets/images/old-house.jpg")}
+            name={"Старий будиночок у Венеції"}
+            commentsNumber={50}
+            country={"Italy"}
+            likes={200}
+          />
+        </ScrollView>
+      </View>
+    </ScreenBackground>
+  );
 };
 
 const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  inner: {
-    flex: 1,
-    justifyContent: "space-around",
-  },
-
-  image: {
-    flex: 1,
-    justifyContent: "center",
-    width: "100%",
-    height: "100%",
-  },
-  background: {
-    position: "relative",
-    backgroundColor: "#ffffff",
-    marginTop: "auto",
-    paddingTop: 22,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingBottom: 15,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
+ 
   text: {
     color: "#212121",
     fontSize: 30,
@@ -119,6 +66,51 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     textAlign: "center",
     marginBottom: 32,
+  },
+
+  wrapper: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    height: "80%",
+    width: "100%",
+    backgroundColor: "white",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    alignContent: "flex-end",
+  },
+  photoWrapper: {
+    width: 120,
+    height: 120,
+    position: "absolute",
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+    top: -60,
+    left: "55%",
+    transform: [{ translateX: -60 }],
+    resizeMode: "cover",
+  },
+  deletePhotoButton: {
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 25,
+    height: 25,
+    borderColor: "#E8E8E8",
+    backgroundColor: "white",
+    borderRadius: 12.5,
+    borderWidth: 1,
+    top: 81,
+    right: -12.5,
+  },
+  text: {
+    marginTop: 92,
+    marginBottom: 32,
+    textAlign: "center",
+    fontSize: 30,
+    lineHeight: 35.16,
+    color: "#212121",
   },
 
   imageContainer: {
@@ -132,40 +124,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 25,
   },
-  input: {
-    marginBottom: 12,
-    height: 42,
-    borderWidth: 1,
-    padding: 14,
+  imageWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#F6F6F6",
-    color: "#000",
-    borderColor: "#E8E8E8",
+    width: "100%",
+    height: 220,
+    marginBottom: 8,
   },
-  button: {
-    padding: 16,
-    borderRadius: 25,
-    backgroundColor: "#FF6C00",
-    marginTop: 6,
-    marginBottom: 12,
-  },
-  buttonText: {
-    color: "#fff9f9",
-    fontSize: 16,
-    lineHeight: 16,
-    textAlign: "center",
-  },
-  info: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#1B4371",
-  },
-
-  svg: {
-    position: "absolute",
-    bottom: 14,
-    right: -15,
-  },
-  underline: {
-    textDecorationLine: "underline",
+  infoWrapper: {
+    flexDirection: "row",
+    gap: 24,
   },
 });

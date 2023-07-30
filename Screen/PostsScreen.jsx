@@ -13,36 +13,52 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { LogOutImage } from "./components/svg/LogOutImageSvg";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Img from "../assets/images/user-photo.jpg";
-import { MenuSvg } from "./components/svg/MenuSvg";
-import { UserSvg } from "./components/svg/User";
-import { PlusSvg } from "./components/svg/PlusSvg";
+import { ProfilePost } from "./components/ProfilePost";
+
+
 
 export const PostsScreen = (props) => {
   const { navigate } = props.navigation;
 
   return (
-    
-      <View style={styles.container}>
-        {/* <View style={styles.header}>
-          <Text style={styles.text}>Публікації</Text>
-          <LogOutImage style={styles.logout} />
-        </View> */}
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.main}>
-            <View style={styles.user}>
-              <Image source={Img} style={styles.avatar} />
-              <View>
-                <Text style={{ fontWeight: 700 }}>Natali Romanova</Text>
-                <Text>email@example.com</Text>
-              </View>
+    <View style={styles.container}>
+      
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.main}>
+          <View style={styles.user}>
+            <Image source={Img} style={styles.avatar} />
+            <View>
+              <Text style={{ fontWeight: 700 }}>Natali Romanova</Text>
+              <Text>email@example.com</Text>
             </View>
           </View>
-        </ScrollView>
 
-        {/* <View style={styles.footer}>
+          <ProfilePost
+            way={require("../assets/images/forest.jpg")}
+            name={"Ліс"}
+            commentsNumber={8}
+            country={"Ukraine"}
+            likes={153}
+          />
+          <ProfilePost
+            way={require("../assets/images/sunset.jpg")}
+            name={"Захід на Чорному морі"}
+            commentsNumber={2}
+            country={"Ukraine"}
+            likes={200}
+          />
+          <ProfilePost
+            way={require("../assets/images/old-house.jpg")}
+            name={"Старий будиночок у Венеції"}
+            commentsNumber={50}
+            country={"Italy"}
+            likes={200}
+          />
+        </View>
+      </ScrollView>
+
+      {/* <View style={styles.footer}>
           <MenuSvg />
           <TouchableOpacity
             style={styles.button}
@@ -51,7 +67,7 @@ export const PostsScreen = (props) => {
           </TouchableOpacity>
           <UserSvg />
         </View> */}
-      </View>
+    </View>
   );
 };
 
@@ -95,7 +111,7 @@ const styles = StyleSheet.create({
   user: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 14,
+    marginBottom: 32,
   },
 
   footer: {
