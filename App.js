@@ -12,31 +12,38 @@ import { StatusBar } from "react-native";
 
 import { CreatePosts } from "./Screen/CreatePostsScreen";
 import { PostsScreen } from "./Screen/PostsScreen";
+import { CommentsScreen } from "./Screen/CommentsScreen";
 
 
 const MainStack = createStackNavigator();
 
 export default function App() {
   return (
-     <NavigationContainer >
-        <MainStack.Navigator initialRouteName="Registration">
-          <MainStack.Screen
-            name="Registration"
-            component={RegistrationScreen}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="Home"
-            component={Home}
-            options={{ headerShown: false }}
-          />
-        </MainStack.Navigator>
-      </NavigationContainer>
+    <NavigationContainer>
+      <MainStack.Navigator initialRouteName="Registration">
+        <MainStack.Screen
+          name="Registration"
+          component={RegistrationScreen}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name="Home"
+          component={Home}
+          options={{ headerShown: false }}
+        />
+
+        <MainStack.Screen
+          name="Comments"
+          component={CommentsScreen}
+          options={{ headerShown: false }}
+        />
+      </MainStack.Navigator>
+    </NavigationContainer>
   );
 }
 

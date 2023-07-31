@@ -1,15 +1,24 @@
 import { Image, StyleSheet, Text } from "react-native";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { MessageSvg } from "./svg/MessageSvg";
 import { LikeSvg } from "./svg/LikeSvg";
 import { MapPin } from "./svg/MapSvg";
+import { useNavigation } from "@react-navigation/native";
+import House from '../../assets/images/old-house.jpg'
 
-export const ProfilePost = ({ way, name, country, commentsNumber, likes }) => {
+export const ProfilePost = ({ image, name, country, comments = [], likes }) => {
+    const navigation = useNavigation();
+    
+
+  const handleCommentsClick = () => {
+      navigation.navigate("Comments", { comments: comments });
+
+  };
   return (
     <View style={{ marginBottom: 32 }}>
       <View style={{ marginBottom: 8 }}>
         <Image
-          source={way}
+          source={image}
           resizeMode={"cover"}
           style={{ width: "100%", height: 240, borderRadius: 8 }}
         />
@@ -26,7 +35,9 @@ export const ProfilePost = ({ way, name, country, commentsNumber, likes }) => {
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={{ flexDirection: "row", gap: 24 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <MessageSvg fill="#FF6C00" stroke="#FF6C00" />
+            <TouchableOpacity onPress={handleCommentsClick}>
+              <MessageSvg fill="#FF6C00" stroke="#FF6C00" />
+            </TouchableOpacity>
             <Text
               style={[
                 styles.text,
@@ -34,7 +45,7 @@ export const ProfilePost = ({ way, name, country, commentsNumber, likes }) => {
                   color: "#212121",
                 },
               ]}>
-              {commentsNumber}
+              {comments.length}
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>

@@ -1,9 +1,9 @@
-import React  from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
   View,
-   TouchableOpacity,
+  TouchableOpacity,
   Image,
   ScrollView,
 } from "react-native";
@@ -13,24 +13,92 @@ import { ScreenBackground } from "./components/ScreenBackground";
 import { ProfilePost } from "./components/ProfilePost";
 import { CloseSvg } from "./components/svg/CloseSvg";
 
-
 export const ProfileScreen = ({ navigation }) => {
+  const data = [
+    {
+      image: require("../assets/images/forest.jpg"),
+      name: "Ліс",
+      country: "Ukraine",
+      likes: 153,
+      comments: [
+        {
+          id: "some-uuid-1",
+          text: "Great job",
+        },
+        {
+          id: "some-uuid-2",
+          text: "Great job",
+        },
+      ],
+    },
+    {
+      image: require("../assets/images/sunset.jpg"),
+      name: "Захід на Чорному морі",
+      country: "Ukraine",
+      likes: 200,
+      comments: [
+        {
+          id: "some-uuid-1",
+          text: "Great job",
+        },
+        {
+          id: "some-uuid-2",
+          text: "Great job",
+        },
+        {
+          id: "some-uuid-3",
+          text: "Great job",
+        },
+      ],
+    },
+    {
+      image: require("../assets/images/old-house.jpg"),
+      name: "Старий будиночок у Венеції",
+      country: "Italy",
+      likes: 200,
+      comments: [
+        {
+          id: "some-uuid-1",
+          text: "Great job",
+        },
+        {
+          id: "some-uuid-2",
+          text: "Great job",
+        },
+        {
+          id: "some-uuid-3",
+          text: "Great job",
+        },
+      ],
+    },
+  ];
 
   return (
-       <ScreenBackground>
+    <ScreenBackground>
       <View style={styles.wrapper}>
         <TouchableOpacity style={{ position: "absolute", right: 16, top: 22 }}>
-          <LogOutImage onPress={() => navigation.navigate("Registration")}/>
+          <LogOutImage onPress={() => navigation.navigate("Registration")} />
         </TouchableOpacity>
         <View style={styles.photoWrapper}>
-          <Image source={require("../assets/images/user120x120.png")}/>
+          <Image source={require("../assets/images/user120x120.png")} />
           <TouchableOpacity style={styles.deletePhotoButton}>
             <CloseSvg />
           </TouchableOpacity>
         </View>
         <Text style={styles.text}>Natali Romanova</Text>
         <ScrollView>
-          <ProfilePost
+          <View>
+            {data.map((i) => (
+              <ProfilePost
+                image={i.image}
+                name={i.name}
+                comments={i.comments}
+                country={i.country}
+                likes={i.likes}
+              />
+            ))}
+          </View>
+          {/* <ProfilePost
             way={require("../assets/images/forest.jpg")}
             name={"Ліс"}
             commentsNumber={8}
@@ -50,7 +118,7 @@ export const ProfileScreen = ({ navigation }) => {
             commentsNumber={50}
             country={"Italy"}
             likes={200}
-          />
+          /> */}
         </ScrollView>
       </View>
     </ScreenBackground>
@@ -58,7 +126,6 @@ export const ProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
- 
   text: {
     color: "#212121",
     fontSize: 30,

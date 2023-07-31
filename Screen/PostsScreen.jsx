@@ -16,14 +16,11 @@ import {
 import Img from "../assets/images/user-photo.jpg";
 import { ProfilePost } from "./components/ProfilePost";
 
-
-
 export const PostsScreen = (props) => {
   const { navigate } = props.navigation;
 
   return (
     <View style={styles.container}>
-      
       <ScrollView style={styles.scrollView}>
         <View style={styles.main}>
           <View style={styles.user}>
@@ -34,7 +31,7 @@ export const PostsScreen = (props) => {
             </View>
           </View>
 
-          <ProfilePost
+          {/* <ProfilePost
             way={require("../assets/images/forest.jpg")}
             name={"Ліс"}
             commentsNumber={8}
@@ -54,7 +51,7 @@ export const PostsScreen = (props) => {
             commentsNumber={50}
             country={"Italy"}
             likes={200}
-          />
+          /> */}
         </View>
       </ScrollView>
 
@@ -82,7 +79,6 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     // marginBottom: 80,
   },
- 
 
   text: {
     position: "relative",
