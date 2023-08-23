@@ -12,66 +12,11 @@ import { ScreenBackground } from "./components/ScreenBackground";
 
 import { ProfilePost } from "./components/ProfilePost";
 import { CloseSvg } from "./components/svg/CloseSvg";
+import { data } from "./data";
 
+ 
 export const ProfileScreen = ({ navigation }) => {
-  const data = [
-    {
-      image: require("../assets/images/forest.jpg"),
-      name: "Ліс",
-      country: "Ukraine",
-      likes: 153,
-      comments: [
-        {
-          id: "some-uuid-1",
-          text: "Great job",
-        },
-        {
-          id: "some-uuid-2",
-          text: "Great job",
-        },
-      ],
-    },
-    {
-      image: require("../assets/images/sunset.jpg"),
-      name: "Захід на Чорному морі",
-      country: "Ukraine",
-      likes: 200,
-      comments: [
-        {
-          id: "some-uuid-1",
-          text: "Great job",
-        },
-        {
-          id: "some-uuid-2",
-          text: "Great job",
-        },
-        {
-          id: "some-uuid-3",
-          text: "Great job",
-        },
-      ],
-    },
-    {
-      image: require("../assets/images/old-house.jpg"),
-      name: "Старий будиночок у Венеції",
-      country: "Italy",
-      likes: 200,
-      comments: [
-        {
-          id: "some-uuid-1",
-          text: "Great job",
-        },
-        {
-          id: "some-uuid-2",
-          text: "Great job",
-        },
-        {
-          id: "some-uuid-3",
-          text: "Great job",
-        },
-      ],
-    },
-  ];
+ 
 
   return (
     <ScreenBackground>
@@ -95,6 +40,7 @@ export const ProfileScreen = ({ navigation }) => {
                 comments={i.comments}
                 country={i.country}
                 likes={i.likes}
+                key={i.id}
               />
             ))}
           </View>

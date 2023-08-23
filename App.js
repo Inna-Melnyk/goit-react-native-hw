@@ -2,18 +2,20 @@ import "react-native-gesture-handler";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Button } from "react-native";
 import { RegistrationScreen } from "./Screen/RegistrationScreen";
 import { LoginScreen } from "./Screen/LoginScreen";
 import { Home } from "./Screen/Home";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "react-native";
-
+import { BackButton } from "./Screen/components/svg/BackButton";
 
 import { CreatePosts } from "./Screen/CreatePostsScreen";
 import { PostsScreen } from "./Screen/PostsScreen";
 import { CommentsScreen } from "./Screen/CommentsScreen";
+import { MapScreen } from "./Screen/MapScreen";
 
+// import { useNavigation } from "@react-navigation/native";
 
 const MainStack = createStackNavigator();
 
@@ -40,7 +42,43 @@ export default function App() {
         <MainStack.Screen
           name="Comments"
           component={CommentsScreen}
-          options={{ headerShown: false }}
+          options={({ navigation }) => ({
+            headerTitle: "Коментарі",
+
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Posts");
+                }}>
+                <BackButton style={{ marginLeft: 16 }} />
+              </TouchableOpacity>
+            ),
+            headerStyle: {
+              borderBottomWidth: 1,
+              backgroundColor: "white",
+            },
+          })}
+        />
+
+        <MainStack.Screen
+          name="Map"
+          component={MapScreen}
+          options={({ navigation}) => ({
+            title: "Мапа",
+
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Home");
+                }}>
+                <BackButton style={{ marginLeft: 16 }} />
+              </TouchableOpacity>
+            ),
+            headerStyle: {
+              borderBottomWidth: 1,
+              backgroundColor: "white",
+            },
+          })}
         />
       </MainStack.Navigator>
     </NavigationContainer>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export const Camera = (props) => (
+export const CameraSvg = (props) => (
   <Svg
     width={24}
     height={24}

@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import Img from "../assets/images/user-photo.jpg";
 import { ProfilePost } from "./components/ProfilePost";
+import { data } from "./data";
 
 export const PostsScreen = (props) => {
   const { navigate } = props.navigation;
@@ -31,39 +32,21 @@ export const PostsScreen = (props) => {
             </View>
           </View>
 
-          {/* <ProfilePost
-            way={require("../assets/images/forest.jpg")}
-            name={"Ліс"}
-            commentsNumber={8}
-            country={"Ukraine"}
-            likes={153}
-          />
-          <ProfilePost
-            way={require("../assets/images/sunset.jpg")}
-            name={"Захід на Чорному морі"}
-            commentsNumber={2}
-            country={"Ukraine"}
-            likes={200}
-          />
-          <ProfilePost
-            way={require("../assets/images/old-house.jpg")}
-            name={"Старий будиночок у Венеції"}
-            commentsNumber={50}
-            country={"Italy"}
-            likes={200}
-          /> */}
+          <View>
+            {data.map((i) => (
+              <ProfilePost
+                image={i.image}
+                name={i.name}
+                comments={i.comments}
+                country={i.country}
+                likes={i.likes}
+                key={i.id}
+                location = {i.location}
+              />
+            ))}
+          </View>
         </View>
       </ScrollView>
-
-      {/* <View style={styles.footer}>
-          <MenuSvg />
-          <TouchableOpacity
-            style={styles.button}
-            title="Add">
-            <PlusSvg />
-          </TouchableOpacity>
-          <UserSvg />
-        </View> */}
     </View>
   );
 };

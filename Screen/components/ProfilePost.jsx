@@ -6,14 +6,18 @@ import { MapPin } from "./svg/MapSvg";
 import { useNavigation } from "@react-navigation/native";
 import House from '../../assets/images/old-house.jpg'
 
-export const ProfilePost = ({ image, name, country, comments = [], likes }) => {
+export const ProfilePost = ({ image, name, country, comments = [], likes, location }) => {
     const navigation = useNavigation();
-    
 
   const handleCommentsClick = () => {
-      navigation.navigate("Comments", { comments: comments });
+      navigation.navigate("Comments", { comments: comments, image: image });
 
   };
+  const handleLocationClick = () => {
+    navigation.navigate("Map", { location: location });
+  };
+
+
   return (
     <View style={{ marginBottom: 32 }}>
       <View style={{ marginBottom: 8 }}>
@@ -35,7 +39,7 @@ export const ProfilePost = ({ image, name, country, comments = [], likes }) => {
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View style={{ flexDirection: "row", gap: 24 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <TouchableOpacity onPress={handleCommentsClick}>
+            <TouchableOpacity onPress={handleCommentsClick} image={image}>
               <MessageSvg fill="#FF6C00" stroke="#FF6C00" />
             </TouchableOpacity>
             <Text
@@ -61,7 +65,9 @@ export const ProfilePost = ({ image, name, country, comments = [], likes }) => {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        <TouchableOpacity
+          onPress={handleLocationClick}
+          style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <MapPin />
           <Text
             style={[
@@ -73,7 +79,7 @@ export const ProfilePost = ({ image, name, country, comments = [], likes }) => {
             ]}>
             {country}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

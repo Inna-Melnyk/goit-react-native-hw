@@ -32,7 +32,9 @@ export const Input = ({
   return (
     <TextInput
       style={[{ borderColor: getBorderColor() }, styles.input]}
-      onChangeText={(e) => onChange(e)}
+      onChangeText={(e) => {
+        onChange(e)
+      console.log(e);}}
       value={value}
       placeholder={placeholder}
       placeholderTextColor={placeholderTextColor}

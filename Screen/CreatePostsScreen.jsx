@@ -1,83 +1,195 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   TextInput,
   View,
-
+  Image,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { DeleteSvg } from "./components/svg/DeleteSvg";
 
-import { Camera } from "./components/svg/CameraSvg";
+import { CameraSvg } from "./components/svg/CameraSvg";
 import { MapPin } from "./components/svg/MapSvg";
 
-export const CreatePosts = () => {
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
+import {data}  from "./data"
+
+export const CreatePosts = ({ navigation }) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [photoUri, setPhotoUri] = useState("");
+  const [photoName, setPhotoName] = useState("");
+  const [locationName, setLocationName] = useState("");
+  const [location, setLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState(data)
+
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  const onPublish = (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      let locationData = await Location.getCurrentPositionAsync({});
+
+      const coords = {
+        latitude: locationData.coords.latitude,
+        longitude: locationData.coords.longitude,
+      };
+      setLocation({
+        latitude: locationData.coords.latitude,
+        longitude: locationData.coords.longitude,
+      });
+     
+      const newPost = {
+        name: photoName,
+        place: location,
+        uri: photoUri,
+      };
+      setPosts((prevPosts) => {
+        return [newPost, ...prevPosts];
+      });
+      navigation.navigate("Posts");
+      setPhotoName("");
+      setLocationName("");
+      setPhotoUri("");
+      setLocation({});
+      setLoading(false);
+    })();
+         
+
+  };
+
   return (
     // <SafeAreaView
     //   style={{...styles.safe, backgroundColor:'#000'} }
     //   edges={["right", "left", "bottom", "top"]}>
-      <View style={styles.container}>
-        <View style={styles.imageWrapper}>
-          <View style={styles.logoBgc}>
-            <Camera />
-          </View>
+    <View style={styles.container}>
+      {photoUri ? (
+        <View>
+          <Image
+            source={{ uri: photoUri }}
+            style={{ width: "100%", height: 220 }}
+          />
         </View>
+      ) : (
+        <Camera type={type} ref={setCamera}>
+          <View style={styles.imageWrapper}>
+            <TouchableOpacity
+              style={styles.flip}
+              onPress={() => {
+                setType(
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
+                );
+              }}>
+              <Text style={{ fontSize: 18, color: "white" }}>Flip</Text>
+            </TouchableOpacity>
 
-        <Text
-          style={styles.text}>
-          Завантажте фото
-        </Text>
+            <TouchableOpacity
+              style={styles.logoBgc}
+              onPress={async () => {
+                if (camera) {
+                  const { uri } = await camera.takePictureAsync();
+                  await MediaLibrary.createAssetAsync(uri);
+                  setPhotoUri(uri);
+                }
+              }}>
+              <CameraSvg />
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      )}
 
+      {photoUri ? (
+        <Text style={styles.text}>Редагувати фото</Text>
+      ) : (
+        <Text style={styles.text}>Завантажте фото</Text>
+      )}
+      <TextInput
+        style={styles.inputNameText}
+        placeholder={"Назва..."}
+        placeholderTextColor={"#BDBDBD"}
+        inputMode={"text"}
+        onChangeText={(e) => setPhotoName(e)}
+        value={photoName}
+      />
+
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          borderRadius: 50,
+          marginBottom: 32,
+        }}>
+        <MapPin
+          style={{
+            position: "absolute",
+            left: 0,
+          }}
+        />
         <TextInput
-          style={styles.inputNameText}
-          placeholder={"Назва..."}
+          style={styles.inputLocation}
+          placeholder={"Місцевість..."}
           placeholderTextColor={"#BDBDBD"}
           inputMode={"text"}
+          onChangeText={(e) => setLocationName(e)}
+          value={locationName}
         />
+      </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            borderRadius: 50,
-            marginBottom: 32,
-          }}>
-          <MapPin
-            style={{
-              position: "absolute",
-              left: 0,
-            }}
-          />
-          <TextInput
-            style={styles.inputLocation}
-
-            placeholder={"Місцевість..."}
-            placeholderTextColor={"#BDBDBD"}
-            inputMode={"text"}
-          />
-        </View>
-
+      {loading ? (
+        <TouchableOpacity
+          style={styles.button}
+          title="Зареєстуватися">
+          <Text style={styles.buttonText}>Loading...</Text>
+        </TouchableOpacity>
+      ) : (
         <TouchableOpacity
           style={styles.button}
           title="Зареєстуватися"
-          //   onPress={onRegister}
-        >
+          onPress={onPublish}>
           <Text style={styles.buttonText}>Опубліковати</Text>
         </TouchableOpacity>
+      )}
 
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.button}
-            title="Delete"
-            onPress={() => null}>
-            <DeleteSvg />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.button}
+          title="Delete"
+          onPress={() => {
+            setPhotoName("");
+            setLocationName("");
+            setPhotoUri(null);
+          }}>
+          <DeleteSvg />
+        </TouchableOpacity>
       </View>
-    //  </SafeAreaView> 
+    </View>
+    //  </SafeAreaView>
   );
 };
 
@@ -87,16 +199,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 16,
+    paddingTop: 32,
   },
 
   imageWrapper: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F6F6F6",
     width: "100%",
     height: 220,
-    marginTop: 32,
-    marginBottom: 8,
+  },
+  flip: {
+    position: "absolute",
+    left: 10,
+    top: 10,
+    margin: 0,
+    padding: 0,
   },
 
   logoBgc: {
@@ -112,6 +229,7 @@ const styles = StyleSheet.create({
     lineHeight: 18.75,
     color: "#BDBDBD",
     marginBottom: 32,
+    marginTop: 8,
   },
   inputNameText: {
     borderBottomWidth: 1,
@@ -136,7 +254,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 23,
     paddingVertical: 16,
     borderRadius: 25,
-    // backgroundColor: "#FF6C00",
+    backgroundColor: "#FF6C00",
     backgroundColor: "#F6F6F6",
     marginTop: 6,
     marginBottom: 12,
@@ -158,5 +276,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingBottom: 16,
-  },
+  }
 });
