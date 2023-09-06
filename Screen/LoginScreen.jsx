@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -15,17 +15,50 @@ import { ScreenBackground } from "./components/ScreenBackground";
 import { Input } from "./components/Input";
 import { StatusBar } from "react-native";
 
+import { useDispatch, useSelector } from "react-redux";
+import { logIn } from "./redux/authSlice";
+import { auth } from "../config";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [isOpenKeyboard, setIsOpenKeyboard] = useState(false);
 
+  const dispatch = useDispatch();
+
   const navigation = useNavigation();
 
-  const onLogin = () => {
-    console.log({ email: email, password: password });
-    navigation.navigate("Home");
-    reset();
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      //  setLoading(false);
+      if (user) {
+        navigation.navigate("Home");
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  //  const togglePassword = () => {
+  //    setSecureTextEntry(!secureTextEntry);
+  //  };
+
+  const onLogin = async () => {
+    try {
+      const credentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      dispatch(logIn({ email, password }));
+      navigation.navigate("Home");
+      reset();
+      return credentials.user;
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const reset = () => {

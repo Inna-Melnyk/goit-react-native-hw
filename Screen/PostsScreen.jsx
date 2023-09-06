@@ -1,51 +1,180 @@
-import { React, useState } from "react";
-
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Image,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { React, useState, useEffect } from "react";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import Img from "../assets/images/user-photo.jpg";
 import { ProfilePost } from "./components/ProfilePost";
-import { data } from "./data";
+
+import { useSelector, useDispatch } from "react-redux";
+import { selectPosts } from "./redux/selectors";
+import { addPost, allPosts } from "./redux/postSlice";
+
+import { auth } from "../config";
+
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../config";
+import { firebase } from "firebase/firestore";
 
 export const PostsScreen = (props) => {
   const { navigate } = props.navigation;
+  const dispatch = useDispatch();
+
+  const [user, setUser] = useState(null);
+  const [postsData, setPostsData] = useState([]);
+
+  const getCommentsNumber = async (postId) => {
+    const userId = auth.currentUser.uid;
+    const commentsRef = collection(
+      db,
+      "user",
+      userId,
+      "posts",
+      postId,
+      "comments"
+    );
+    const commentsSnapshot = await getDocs(commentsRef);
+    const commentsNumber = commentsSnapshot.docs.length;
+    return commentsNumber;
+  };
+
+  // const getCommentsNumber = async (postId) => {
+  //   const userId = auth.currentUser.uid;
+  //   console.log(user);
+
+  //   const commentsRef = collection(
+  //     db,
+  //     "user",
+  //     userId,
+  //     "posts",
+  //     postId,
+  //     "comments"
+  //   );
+
+  //   const commentsSnapshot = await getDocs(commentsRef);
+  //   const comments = commentsSnapshot.docs.map((doc) => ({
+  //     ...doc.data(),
+  //     id: doc.id,
+  //   }));
+  //   const commentsNumber = comments.length;
+  //   console.log("com num =>", commentsNumber);
+  //   return commentsNumber;
+  // };
+
+  const fetchAndFormatPostsWithCommentsCount = async (posts) => {
+    const updatedPosts = [];
+    for (const post of posts) {
+      const commentCount = await getCommentsNumber(post.id);
+      updatedPosts.push({ ...post, comments: commentCount });
+    }
+
+    dispatch(allPosts(updatedPosts));
+  };
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "user", auth.currentUser.uid, "posts"),
+      async (snapshot) => {
+        const posts = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+          comments: 0,
+        }));
+        await fetchAndFormatPostsWithCommentsCount(posts);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [auth.currentUser.uid]);
+
+  // useEffect(() => {
+  //   console.log("postsData", postsData);
+  //   // postsData.forEach(async (post) => {
+  //   //   const number = await getCommentsNumber(post.id);
+  //   //   setPostsData(
+  //   //     postsData.map((post) =>
+  //   //       post.id === post.id ? { ...post, comments: number } : post
+  //   //     )
+  //   //   );
+  //   // });
+  // }, [postsData]);
+
+  // useEffect(() => {
+  //   const unsubscribe = onSnapshot(
+  //     collection(db, "user", auth.currentUser.uid, "posts"),
+  //     async (snapshot) => {
+  //       const newData = await Promise.all(
+  //         snapshot.docs.map((doc) => {
+  //           // const number = await getCommentsNumber(doc.id);
+
+  //           return {
+  //             ...doc.data(),
+  //             id: doc.id,
+  //             comments: 7,
+  //           };
+  //         })
+  //       );
+
+  //       setPostsData(newData);
+  //       dispatch(allPosts(newData));
+  //       console.log("new data =>", newData);
+  //     }
+  //   );
+  //   return () => unsubscribe();
+  // }, [auth.currentUser.uid]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const posts = useSelector(selectPosts);
+
+  console.log("dataa", { posts });
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.main}>
-          <View style={styles.user}>
-            <Image source={Img} style={styles.avatar} />
+        {user && (
+          <View style={styles.main}>
+            <View style={styles.user}>
+              <Image source={Img} style={styles.avatar} />
+              <View>
+                <Text style={{ fontWeight: 700 }}>
+                  {auth.currentUser.displayName}
+                </Text>
+                <Text>{auth.currentUser.email}</Text>
+              </View>
+            </View>
+
             <View>
-              <Text style={{ fontWeight: 700 }}>Natali Romanova</Text>
-              <Text>email@example.com</Text>
+              {posts.map(
+                ({ id, uri, name, country, likes, coords, comments }) => {
+                  return (
+                    <ProfilePost
+                      id={id}
+                      image={uri}
+                      name={name}
+                      country={country}
+                      comments={comments}
+                      likes={likes}
+                      key={id}
+                      location={coords}
+                    />
+                  );
+                }
+              )}
             </View>
           </View>
-
-          <View>
-            {data.map((i) => (
-              <ProfilePost
-                image={i.image}
-                name={i.name}
-                comments={i.comments}
-                country={i.country}
-                likes={i.likes}
-                key={i.id}
-                location = {i.location}
-              />
-            ))}
-          </View>
-        </View>
+        )}
       </ScrollView>
     </View>
   );

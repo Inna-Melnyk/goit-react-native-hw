@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   StyleSheet,
@@ -18,21 +18,93 @@ import { Input } from "./components/Input";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "react-native";
 
+import { createUser } from "../Screen/redux/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../config";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { db } from "../config";
+
+
 export const RegistrationScreen = () => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+
   // const [isOpenKeyboard, setIsOpenKeyboard] = useState(false);
+
+  const dispatch = useDispatch();
 
 
   const navigation = useNavigation();
 
-  const onRegister = () => {
-    console.log({ login: login, email: email, password: password });
-    navigation.navigate("Home");
-    reset();
+
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        // setLoading(false);
+        if (user) {
+          navigation.navigate("Home");
+        }
+      });
+      return () => {
+        unsubscribe();
+      };
+    }, []);
+
+
+  const writeUserToFirestore = async (newUser) => {
+    try {
+       await setDoc(doc(db, "user", auth.currentUser.uid), newUser);
+
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
+    }
   };
+
+  
+  const onRegister = async (evt) => {
+    console.log({ login, email, password });
+    await createUserWithEmailAndPassword(auth, email, password, login)
+      .then ((userCredential) => {
+        // Signed in
+        console.log("login =>", login);
+
+         updateProfile(auth.currentUser, {
+          displayName: `${login}`,
+        })
+          .then(() => {
+            // Profile updated!
+            const newUser = {
+              login,
+                email,
+              password,
+            }
+    writeUserToFirestore(newUser);
+
+            dispatch(createUser({ email, password }));
+            // alert(`The user ${user.email} was created.`);
+            navigation.navigate("Home");
+            reset();
+          })
+          .catch((error) => {
+alert(error.message)         
+          });
+      });
+     
+
+   
+
+  };
+
+
 
   const reset = () => {
     setLogin("");

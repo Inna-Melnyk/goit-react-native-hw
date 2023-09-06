@@ -4,25 +4,32 @@ import { MessageSvg } from "./svg/MessageSvg";
 import { LikeSvg } from "./svg/LikeSvg";
 import { MapPin } from "./svg/MapSvg";
 import { useNavigation } from "@react-navigation/native";
-import House from '../../assets/images/old-house.jpg'
+import House from "../../assets/images/old-house.jpg";
 
-export const ProfilePost = ({ image, name, country, comments = [], likes, location }) => {
-    const navigation = useNavigation();
+export const ProfilePost = ({
+  image,
+  name,
+  country,
+  comments,
+  likes,
+  location,
+  id,
+}) => {
+  const navigation = useNavigation();
+  console.log("comments =>", comments);
 
   const handleCommentsClick = () => {
-      navigation.navigate("Comments", { comments: comments, image: image });
-
+    navigation.navigate("Comments", { image: image, postId: id });
   };
   const handleLocationClick = () => {
     navigation.navigate("Map", { location: location });
   };
 
-
   return (
     <View style={{ marginBottom: 32 }}>
       <View style={{ marginBottom: 8 }}>
         <Image
-          source={image}
+          source={{ uri: image }}
           resizeMode={"cover"}
           style={{ width: "100%", height: 240, borderRadius: 8 }}
         />
@@ -49,7 +56,7 @@ export const ProfilePost = ({ image, name, country, comments = [], likes, locati
                   color: "#212121",
                 },
               ]}>
-              {comments.length}
+              {comments}
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>

@@ -1,13 +1,104 @@
-import { View, Text, FlatList, Image, TouchableOpacity, KeyboardAvoidingView, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  TextInput,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { ArrowUp } from "./components/svg/ArrowUp";
+import { db, auth } from "../config";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { useSelector, useDispatch } from "react-redux";
+import { selectPosts } from "./redux/selectors";
+import { allPosts } from "./redux/postSlice";
 
 export const CommentsScreen = ({ route }) => {
-  const { comments, image } = route.params;
+  const { image, postId } = route.params;
   const [isOpenKeyboard, setIsOpenKeyboard] = useState(false);
   const [comment, setComment] = useState("");
+  const [commentsData, setCommentsData] = useState([]);
+  const posts = useSelector(selectPosts);
+  const dispatch = useDispatch();
 
+  const avatar = require("../assets/images/elipse.jpg");
 
+  console.log(postId);
+
+  useEffect(() => {
+    getComments();
+  }, []);
+
+  const getComments = async () => {
+    const userId = auth.currentUser.uid;
+
+    const commentsRef = collection(
+      db,
+      "user",
+      userId,
+      "posts",
+      postId,
+      "comments"
+    );
+
+    const commentsSnapshot = await getDocs(commentsRef);
+    const comments = commentsSnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    setCommentsData(comments);
+    console.log(commentsData);
+  };
+
+  const updatePostCommentsCount = () => {
+    const updatedPosts = posts.map((post) => ({
+      ...post,
+      comments: post.comments + 1,
+    }));
+
+    dispatch(allPosts(updatedPosts));
+  };
+
+  const writeDataToFirestore = async (comment, postId) => {
+    const userId = auth.currentUser.uid;
+    console.log(comment);
+    const timestamp = new Date().toISOString();
+    try {
+      await addDoc(
+        collection(db, "user", userId, "posts", postId, "comments"),
+        {
+          postId,
+          comment,
+          timestamp,
+          avatar,
+        }
+      );
+      await updatePostCommentsCount();
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
+    }
+  };
+
+  const handleAddComment = async (comment, postId) => {
+    console.log(comment);
+    writeDataToFirestore(comment, postId);
+    getComments();
+    setComment("");
+  };
+
+  const formatTimestamp = (timestamp) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(timestamp).toLocaleString("uk-UA", options);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -22,7 +113,7 @@ export const CommentsScreen = ({ route }) => {
           paddingBottom: isOpenKeyboard ? 70 : 16,
         }}>
         <Image
-          source={image}
+          source={{ uri: image }}
           resizeMode={"cover"}
           style={{
             width: "100%",
@@ -34,7 +125,7 @@ export const CommentsScreen = ({ route }) => {
 
         <FlatList
           style={{}}
-          data={comments}
+          data={commentsData}
           renderItem={({ item }) => (
             <View
               style={{
@@ -43,7 +134,7 @@ export const CommentsScreen = ({ route }) => {
                 marginBottom: 16,
               }}>
               <Image
-                source={item.avatar}
+                source={avatar}
                 style={{ borderRadius: 50, width: 28, height: 28 }}
               />
               <View
@@ -51,11 +142,12 @@ export const CommentsScreen = ({ route }) => {
                   backgroundColor: "#F6F6F6",
                   borderRadius: 8,
                   padding: 16,
+                  width: "87%",
                 }}>
                 <Text style={{ paddingBottom: 8, paddingRight: 32 }}>
-                  {item.text}
+                  {item.comment}
                 </Text>
-                <Text style={{ color: "#BDBDBD" }}>{item.time}</Text>
+                <Text style={{ color: "#BDBDBD" }}>{item.timestamp}</Text>
               </View>
             </View>
           )}
@@ -83,7 +175,7 @@ export const CommentsScreen = ({ route }) => {
             placeholder="Коментувати..."
           />
           <TouchableOpacity
-            // onPress={() => handleAddComment(postId, comment)}
+            onPress={() => handleAddComment(comment, postId)}
             style={{
               position: "absolute",
               right: 8,

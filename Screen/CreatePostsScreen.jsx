@@ -18,9 +18,19 @@ import { MapPin } from "./components/svg/MapSvg";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
-import {data}  from "./data"
+import { useSelector, useDispatch } from "react-redux";
+import { selectPosts } from "./redux/selectors";
+import { addPost } from "./redux/postSlice";
+
+
+import { collection, addDoc, doc} from "firebase/firestore";
+import { db, auth } from "../config";
+
 
 export const CreatePosts = ({ navigation }) => {
+    const dispatch = useDispatch();
+    const posts = useSelector(selectPosts);
+
   const [hasPermission, setHasPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -30,7 +40,23 @@ export const CreatePosts = ({ navigation }) => {
   const [location, setLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState(data)
+
+
+
+  const writeDataToFirestore = async (newPost) => {
+    const userId = auth.currentUser.uid;
+    
+   try {
+     await addDoc(collection(db, "user", userId, "posts"), newPost);
+   } catch (e) {
+     console.error("Error adding document: ", e);
+     throw e;
+   }
+
+
+
+  }
+
 
 
   useEffect(() => {
@@ -40,12 +66,7 @@ export const CreatePosts = ({ navigation }) => {
 
       setHasPermission(status === "granted");
     })();
-  }, []);
 
-  const onPublish = (e) => {
-    e.preventDefault();
-
-    setLoading(true);
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -62,22 +83,31 @@ export const CreatePosts = ({ navigation }) => {
         latitude: locationData.coords.latitude,
         longitude: locationData.coords.longitude,
       });
-     
-      const newPost = {
-        name: photoName,
-        place: location,
-        uri: photoUri,
-      };
-      setPosts((prevPosts) => {
-        return [newPost, ...prevPosts];
-      });
-      navigation.navigate("Posts");
-      setPhotoName("");
-      setLocationName("");
-      setPhotoUri("");
-      setLocation({});
-      setLoading(false);
     })();
+  }, []);
+
+  const onPublish = (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+  
+    const newPost = {
+      name: photoName,
+      uri: photoUri,
+      country: locationName,
+      coords: location,
+      likes: 0
+    };
+    writeDataToFirestore(newPost);
+
+     dispatch(addPost({ photoName, photoUri, location, locationName }));
+
+     navigation.navigate("Posts");
+     setPhotoName("");
+     setLocationName("");
+     setPhotoUri("");
+     setLocation({});
+     setLoading(false);
          
 
   };

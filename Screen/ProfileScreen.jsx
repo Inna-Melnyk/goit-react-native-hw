@@ -12,17 +12,39 @@ import { ScreenBackground } from "./components/ScreenBackground";
 
 import { ProfilePost } from "./components/ProfilePost";
 import { CloseSvg } from "./components/svg/CloseSvg";
-import { data } from "./data";
+import { useSelector, useDispatch } from "react-redux";
+import { selectPosts } from "./redux/selectors";
 
- 
+import { logOut } from "./redux/authSlice";
+import { auth } from "../config";
+import { signOut } from "firebase/auth";
+
 export const ProfileScreen = ({ navigation }) => {
- 
+  const posts = useSelector(selectPosts);
+  const dispatch = useDispatch();
 
+  // const userName = auth.currentUser.displayName;
+
+  // console.log("data =>", data);
+
+  dispatch(logOut());
   return (
     <ScreenBackground>
       <View style={styles.wrapper}>
         <TouchableOpacity style={{ position: "absolute", right: 16, top: 22 }}>
-          <LogOutImage onPress={() => navigation.navigate("Registration")} />
+          <LogOutImage
+            onPress={() =>
+              auth
+                .signOut()
+                .then(() => {
+                  dispatch(logOut());
+                  navigation.navigate("Login");
+                })
+                .catch((error) => {
+                  alert(error.message);
+                })
+            }
+          />
         </TouchableOpacity>
         <View style={styles.photoWrapper}>
           <Image source={require("../assets/images/user120x120.png")} />
@@ -30,19 +52,22 @@ export const ProfileScreen = ({ navigation }) => {
             <CloseSvg />
           </TouchableOpacity>
         </View>
-        <Text style={styles.text}>Natali Romanova</Text>
+        <Text style={styles.text}>{auth.currentUser.displayName}</Text>
         <ScrollView>
           <View>
-            {data.map((i) => (
-              <ProfilePost
-                image={i.image}
-                name={i.name}
-                comments={i.comments}
-                country={i.country}
-                likes={i.likes}
-                key={i.id}
-              />
-            ))}
+            {posts.map(
+              ({ id, uri, name, comments, country, likes, coords }) => (
+                <ProfilePost
+                  image={uri}
+                  name={name}
+                  comments={comments}
+                  country={country}
+                  likes={likes}
+                  key={id}
+                  location={coords}
+                />
+              )
+            )}
           </View>
           {/* <ProfilePost
             way={require("../assets/images/forest.jpg")}
