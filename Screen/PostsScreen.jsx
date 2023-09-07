@@ -5,7 +5,7 @@ import { ProfilePost } from "./components/ProfilePost";
 
 import { useSelector, useDispatch } from "react-redux";
 import { selectPosts } from "./redux/selectors";
-import { addPost, allPosts } from "./redux/postSlice";
+import { allPosts } from "./redux/postSlice";
 
 import { auth } from "../config";
 
@@ -13,9 +13,7 @@ import {
   collection,
   getDocs,
   onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+ } from "firebase/firestore";
 import { db } from "../config";
 import { firebase } from "firebase/firestore";
 
@@ -26,7 +24,6 @@ export const PostsScreen = (props) => {
   const [user, setUser] = useState(null);
   const [postsData, setPostsData] = useState([]);
 
-  console.log("user => ",user);
 
   const getCommentsNumber = async (postId) => {
     const userId = auth.currentUser.uid;
@@ -42,29 +39,6 @@ export const PostsScreen = (props) => {
     const commentsNumber = commentsSnapshot.docs.length;
     return commentsNumber;
   };
-
-  // const getCommentsNumber = async (postId) => {
-  //   const userId = auth.currentUser.uid;
-  //   console.log(user);
-
-  //   const commentsRef = collection(
-  //     db,
-  //     "user",
-  //     userId,
-  //     "posts",
-  //     postId,
-  //     "comments"
-  //   );
-
-  //   const commentsSnapshot = await getDocs(commentsRef);
-  //   const comments = commentsSnapshot.docs.map((doc) => ({
-  //     ...doc.data(),
-  //     id: doc.id,
-  //   }));
-  //   const commentsNumber = comments.length;
-  //   console.log("com num =>", commentsNumber);
-  //   return commentsNumber;
-  // };
 
   const fetchAndFormatPostsWithCommentsCount = async (posts) => {
     const updatedPosts = [];
@@ -93,41 +67,6 @@ export const PostsScreen = (props) => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("postsData", postsData);
-  //   postsData.forEach(async (post) => {
-  //   const number = await getCommentsNumber(post.id);
-  //   setPostsData(
-  //   postsData.map((post) =>
-  //   post.id === post.id ? { ...post, comments: number } : post
-  //   )
-  //   );
-  //   });
-  // }, [postsData]);
-
-  // useEffect(() => {
-  //   const unsubscribe = onSnapshot(
-  //     collection(db, "user", auth.currentUser.uid, "posts"),
-  //     async (snapshot) => {
-  //       const newData = await Promise.all(
-  //         snapshot.docs.map((doc) => {
-  //           // const number = await getCommentsNumber(doc.id);
-
-  //           return {
-  //             ...doc.data(),
-  //             id: doc.id,
-  //             comments: 7,
-  //           };
-  //         })
-  //       );
-
-  //       setPostsData(newData);
-  //       dispatch(allPosts(newData));
-  //       console.log("new data =>", newData);
-  //     }
-  //   );
-  //   return () => unsubscribe();
-  // }, [auth.currentUser.uid]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -141,7 +80,6 @@ export const PostsScreen = (props) => {
 
   const posts = useSelector(selectPosts);
 
-  // console.log("dataa", { posts });
 
   return (
     <View style={styles.container}>
@@ -190,11 +128,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
   },
-  scrollView: {
-    // backgroundColor: "pink",
-    // marginBottom: 80,
-  },
-
   text: {
     position: "relative",
     padding: 11,
