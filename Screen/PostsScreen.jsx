@@ -26,6 +26,8 @@ export const PostsScreen = (props) => {
   const [user, setUser] = useState(null);
   const [postsData, setPostsData] = useState([]);
 
+  console.log("user => ",user);
+
   const getCommentsNumber = async (postId) => {
     const userId = auth.currentUser.uid;
     const commentsRef = collection(
@@ -75,6 +77,7 @@ export const PostsScreen = (props) => {
   };
 
   useEffect(() => {
+    const id = auth.currentUser.uid;
     const unsubscribe = onSnapshot(
       collection(db, "user", auth.currentUser.uid, "posts"),
       async (snapshot) => {
@@ -88,18 +91,18 @@ export const PostsScreen = (props) => {
     );
 
     return () => unsubscribe();
-  }, [auth.currentUser.uid]);
+  }, []);
 
   // useEffect(() => {
   //   console.log("postsData", postsData);
-  //   // postsData.forEach(async (post) => {
-  //   //   const number = await getCommentsNumber(post.id);
-  //   //   setPostsData(
-  //   //     postsData.map((post) =>
-  //   //       post.id === post.id ? { ...post, comments: number } : post
-  //   //     )
-  //   //   );
-  //   // });
+  //   postsData.forEach(async (post) => {
+  //   const number = await getCommentsNumber(post.id);
+  //   setPostsData(
+  //   postsData.map((post) =>
+  //   post.id === post.id ? { ...post, comments: number } : post
+  //   )
+  //   );
+  //   });
   // }, [postsData]);
 
   // useEffect(() => {
@@ -138,7 +141,7 @@ export const PostsScreen = (props) => {
 
   const posts = useSelector(selectPosts);
 
-  console.log("dataa", { posts });
+  // console.log("dataa", { posts });
 
   return (
     <View style={styles.container}>
@@ -149,7 +152,7 @@ export const PostsScreen = (props) => {
               <Image source={Img} style={styles.avatar} />
               <View>
                 <Text style={{ fontWeight: 700 }}>
-                  {auth.currentUser.displayName}
+                  {auth.currentUser?.displayName}
                 </Text>
                 <Text>{auth.currentUser.email}</Text>
               </View>

@@ -10,9 +10,8 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { BackButton } from "./components/svg/BackButton";
 import { LogOutImage } from "./components/svg/LogOutImageSvg";
 
-
 import { useDispatch, useSelector } from "react-redux";
-import { logOut} from "./redux/authSlice";
+import { logOut } from "./redux/authSlice";
 import { auth } from "../config";
 import { signOut } from "firebase/auth";
 
@@ -21,8 +20,7 @@ const Tab = createBottomTabNavigator();
 export const Home = (props) => {
   const { navigation } = props;
 
-    const dispatch = useDispatch();
-
+  const dispatch = useDispatch();
 
   return (
     <Tab.Navigator
@@ -55,17 +53,18 @@ export const Home = (props) => {
           title: "Публікації",
           headerRight: () => (
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                navigation.navigate("Login");
+
                 auth
                   .signOut()
                   .then(() => {
-                    // dispatch(logOut());
-                    navigation.navigate("Login");
+                    dispatch(logOut());
                   })
                   .catch((error) => {
                     alert(error.message);
-                  })
-              }>
+                  });
+              }}>
               <LogOutImage style={{ marginRight: 16 }} />
             </TouchableOpacity>
           ),

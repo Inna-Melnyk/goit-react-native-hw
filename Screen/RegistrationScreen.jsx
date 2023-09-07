@@ -31,63 +31,56 @@ import { auth } from "../config";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { db } from "../config";
 
-
 export const RegistrationScreen = () => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   // const [isOpenKeyboard, setIsOpenKeyboard] = useState(false);
 
   const dispatch = useDispatch();
 
-
   const navigation = useNavigation();
 
-
-    useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        // setLoading(false);
-        if (user) {
-          navigation.navigate("Home");
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-    }, []);
-
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      // setLoading(false);
+      if (user) {
+        navigation.navigate("Home");
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const writeUserToFirestore = async (newUser) => {
     try {
-       await setDoc(doc(db, "user", auth.currentUser.uid), newUser);
-
+      await setDoc(doc(db, "user", auth.currentUser.uid), newUser);
     } catch (e) {
       console.error("Error adding document: ", e);
       throw e;
     }
   };
 
-  
   const onRegister = async (evt) => {
     console.log({ login, email, password });
-    await createUserWithEmailAndPassword(auth, email, password, login)
-      .then ((userCredential) => {
+    await createUserWithEmailAndPassword(auth, email, password, login).then(
+      (userCredential) => {
         // Signed in
         console.log("login =>", login);
 
-         updateProfile(auth.currentUser, {
+        updateProfile(auth.currentUser, {
           displayName: `${login}`,
         })
           .then(() => {
             // Profile updated!
             const newUser = {
               login,
-                email,
+              email,
               password,
-            }
-    writeUserToFirestore(newUser);
+            };
+            writeUserToFirestore(newUser);
 
             dispatch(createUser({ email, password }));
             // alert(`The user ${user.email} was created.`);
@@ -95,16 +88,11 @@ export const RegistrationScreen = () => {
             reset();
           })
           .catch((error) => {
-alert(error.message)         
+            alert(error.message);
           });
-      });
-     
-
-   
-
+      }
+    );
   };
-
-
 
   const reset = () => {
     setLogin("");
@@ -116,83 +104,80 @@ alert(error.message)
   // }
 
   return (
-  
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <ScreenBackground>
-            <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1 }}>
-              <View style={styles.inner}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ScreenBackground>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}>
+            <View style={styles.inner}>
+              <View
+                style={{
+                  ...styles.background,
+                  // paddingBottom: isOpenKeyboard ? 78 : 20,
+                }}>
+                <View style={styles.imageContainer}>
+                  <AddImage style={styles.svg} />
+                </View>
+
+                <Text style={styles.text}>Реєстрація</Text>
+                <Input
+                  placeholder={"Логін"}
+                  placeholderTextColor={"#BDBDBD"}
+                  inputMode={"text"}
+                  onChange={setLogin}
+                  value={login}
+                  // isOpenKeyboard={onKeyboard}
+                />
+                <Input
+                  placeholder={"Адреса електронної пошти"}
+                  placeholderTextColor={"#BDBDBD"}
+                  inputMode={"email"}
+                  onChange={setEmail}
+                  value={email}
+                  // isOpenKeyboard={onKeyboard}
+                />
+
+                <Input
+                  placeholder={"Пароль"}
+                  placeholderTextColor={"#BDBDBD"}
+                  onChange={setPassword}
+                  value={password}
+                  secureTextEntry={true}
+                  // isOpenKeyboard={onKeyboard}
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  title="Зареєстуватися"
+                  onPress={onRegister}>
+                  <Text style={styles.buttonText}>Зареєстуватися</Text>
+                </TouchableOpacity>
+
                 <View
                   style={{
-                    ...styles.background,
-                    // paddingBottom: isOpenKeyboard ? 78 : 20,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 2,
                   }}>
-                  <View style={styles.imageContainer}>
-                    <AddImage style={styles.svg} />
-                  </View>
+                  <Text style={styles.info}>Вже є акаунт? </Text>
 
-                  <Text style={styles.text}>Реєстрація</Text>
-                  <Input
-                    placeholder={"Логін"}
-                    placeholderTextColor={"#BDBDBD"}
-                    inputMode={"text"}
-                    onChange={setLogin}
-                    value={login}
-                    // isOpenKeyboard={onKeyboard}
-                  />
-                  <Input
-                    placeholder={"Адреса електронної пошти"}
-                    placeholderTextColor={"#BDBDBD"}
-                    inputMode={"email"}
-                    onChange={setEmail}
-                    value={email}
-                    // isOpenKeyboard={onKeyboard}
-                  />
-
-                  <Input
-                    placeholder={"Пароль"}
-                    placeholderTextColor={"#BDBDBD"}
-                    onChange={setPassword}
-                    value={password}
-                    secureTextEntry={true}
-                    // isOpenKeyboard={onKeyboard}
-                  />
                   <TouchableOpacity
-                    style={styles.button}
-                    title="Зареєстуватися"
-                    onPress={onRegister}>
-                    <Text style={styles.buttonText}>Зареєстуватися</Text>
+                    onPress={() => navigation.navigate("Login")}>
+                    <Text style={[styles.info, styles.underline]}>Увійти</Text>
                   </TouchableOpacity>
-
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      gap: 2,
-                    }}>
-                    <Text style={styles.info}>Вже є акаунт? </Text>
-
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("Login")}>
-                      <Text style={[styles.info, styles.underline]}>
-                        Увійти
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
               </View>
-            </KeyboardAvoidingView>
-          </ScreenBackground>
-          <StatusBar style="auto" />
-        </View>
-      </TouchableWithoutFeedback>
+            </View>
+          </KeyboardAvoidingView>
+        </ScreenBackground>
+        <StatusBar style="auto" />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  safe: { width: "100%", flex: 1, backgroundColor:'#c4c4c4' },
+  safe: { width: "100%", flex: 1, backgroundColor: "#c4c4c4" },
 
   container: {
     flex: 1,
